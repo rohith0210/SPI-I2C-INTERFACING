@@ -1,0 +1,307 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    06/02/2025  14:26:21  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+D:\C51\BIN\BL51.EXE .\Objects\main.obj TO .\Objects\Proteus_simulation_with_EEPROM PRINT (.\Listings\Proteus_simulation_
+>> with_EEPROM.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\main.obj (MAIN)
+  D:\C51\LIB\C51S.LIB (?C_STARTUP)
+  D:\C51\LIB\C51S.LIB (?C?COPY)
+  D:\C51\LIB\C51S.LIB (?C?CLDPTR)
+
+
+LINK MAP OF MODULE:  .\Objects\Proteus_simulation_with_EEPROM (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0013H     UNIT         _DATA_GROUP_
+            IDATA   001BH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     010FH     UNIT         ?C?LIB_CODE
+            CODE    090FH     005DH     UNIT         ?CO?MAIN
+            CODE    096CH     004BH     UNIT         ?PR?MAIN?MAIN
+            CODE    09B7H     0037H     UNIT         ?PR?_EEPROM_WRITE_BYTE?MAIN
+            CODE    09EEH     002EH     UNIT         ?PR?_UART_SEND_HEX?MAIN
+            CODE    0A1CH     002EH     UNIT         ?PR?_SPI_TRANSFER_BYTE?MAIN
+            CODE    0A4AH     0025H     UNIT         ?PR?_UART_SEND_STR?MAIN
+            CODE    0A6FH     0020H     UNIT         ?PR?_EEPROM_READ_BYTE?MAIN
+            CODE    0A8FH     0013H     UNIT         ?PR?_DELAY_US?MAIN
+            CODE    0AA2H     000FH     UNIT         ?PR?UART_INIT?MAIN
+            CODE    0AB1H     000CH     UNIT         ?C_C51STARTUP
+            CODE    0ABDH     000AH     UNIT         ?PR?EEPROM_WRITE_ENABLE?MAIN
+            CODE    0AC7H     0008H     UNIT         ?PR?_UART_SEND_CHAR?MAIN
+            CODE    0ACFH     0005H     UNIT         ?PR?SPI_INIT?MAIN
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\Proteus_simulation_with_EEPROM (MAIN)
+
+
+SEGMENT                                DATA_GROUP 
+  +--> CALLED SEGMENT                START    LENGTH
+----------------------------------------------------
+?C_C51STARTUP                        -----    -----
+  +--> ?PR?MAIN?MAIN
+
+?PR?MAIN?MAIN                        0008H    0001H
+  +--> ?PR?UART_INIT?MAIN
+  +--> ?PR?SPI_INIT?MAIN
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/02/2025  14:26:21  PAGE 2
+
+
+  +--> ?PR?_EEPROM_WRITE_BYTE?MAIN
+  +--> ?CO?MAIN
+  +--> ?PR?_UART_SEND_STR?MAIN
+  +--> ?PR?_UART_SEND_HEX?MAIN
+  +--> ?PR?_EEPROM_READ_BYTE?MAIN
+
+?PR?_EEPROM_WRITE_BYTE?MAIN          0009H    0002H
+  +--> ?PR?EEPROM_WRITE_ENABLE?MAIN
+  +--> ?PR?_SPI_TRANSFER_BYTE?MAIN
+  +--> ?PR?_DELAY_US?MAIN
+
+?PR?EEPROM_WRITE_ENABLE?MAIN         -----    -----
+  +--> ?PR?_SPI_TRANSFER_BYTE?MAIN
+
+?PR?_SPI_TRANSFER_BYTE?MAIN          -----    -----
+  +--> ?PR?_DELAY_US?MAIN
+
+?PR?_UART_SEND_STR?MAIN              0009H    0003H
+  +--> ?PR?_UART_SEND_CHAR?MAIN
+
+?PR?_UART_SEND_HEX?MAIN              0009H    0012H
+  +--> ?CO?MAIN
+  +--> ?PR?_UART_SEND_CHAR?MAIN
+
+?PR?_EEPROM_READ_BYTE?MAIN           0009H    0001H
+  +--> ?PR?_SPI_TRANSFER_BYTE?MAIN
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\Proteus_simulation_with_EEPROM (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  C:0A4AH         PUBLIC        _uart_send_str
+  B:00A0H.1       PUBLIC        SPI_MISO
+  B:00A0H.0       PUBLIC        SPI_MOSI
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  B:0098H.1       PUBLIC        TI
+  C:0A6FH         PUBLIC        _eeprom_read_byte
+  C:096CH         PUBLIC        main
+  C:0A1CH         PUBLIC        _spi_transfer_byte
+  D:0099H         PUBLIC        SBUF
+  C:09B7H         PUBLIC        _eeprom_write_byte
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  C:095BH         SYMBOL        _?ix1000
+  C:0AC7H         PUBLIC        _uart_send_char
+  D:008DH         PUBLIC        TH1
+  D:008BH         PUBLIC        TL1
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/02/2025  14:26:21  PAGE 3
+
+
+  C:0AA2H         PUBLIC        uart_init
+  B:0088H.6       PUBLIC        TR1
+  C:0A93H         PUBLIC        _delay_us
+  B:00A0H.3       PUBLIC        SPI_CS
+  C:0ACFH         PUBLIC        spi_init
+  C:0ABDH         PUBLIC        eeprom_write_enable
+  D:00C8H         PUBLIC        T2CON
+  C:09EEH         PUBLIC        _uart_send_hex
+  D:00D0H         PUBLIC        PSW
+  B:00A0H.2       PUBLIC        SPI_SCLK
+  C:0A8FH         SYMBOL        L?0033
+  -------         PROC          L?0032
+  -------         ENDPROC       L?0032
+  C:0A8FH         SYMBOL        L?0033
+  -------         PROC          _DELAY_US
+  D:0006H         SYMBOL        us
+  C:0A93H         LINE#         11
+  C:0A93H         LINE#         12
+  C:0A9DH         LINE#         13
+  C:0A9EH         LINE#         14
+  C:0A9FH         LINE#         15
+  C:0AA1H         LINE#         16
+  -------         ENDPROC       _DELAY_US
+  -------         PROC          UART_INIT
+  C:0AA2H         LINE#         19
+  C:0AA2H         LINE#         20
+  C:0AA5H         LINE#         21
+  C:0AABH         LINE#         22
+  C:0AAEH         LINE#         23
+  C:0AB0H         LINE#         24
+  -------         ENDPROC       UART_INIT
+  -------         PROC          _UART_SEND_CHAR
+  D:0007H         SYMBOL        c
+  C:0AC7H         LINE#         26
+  C:0AC7H         LINE#         27
+  C:0AC9H         LINE#         28
+  C:0ACCH         LINE#         29
+  C:0ACEH         LINE#         30
+  -------         ENDPROC       _UART_SEND_CHAR
+  -------         PROC          _UART_SEND_STR
+  D:0009H         SYMBOL        s
+  C:0A4AH         LINE#         32
+  C:0A50H         LINE#         33
+  C:0A5BH         LINE#         34
+  C:0A6CH         LINE#         35
+  C:0A6EH         LINE#         36
+  -------         ENDPROC       _UART_SEND_STR
+  -------         PROC          _UART_SEND_HEX
+  D:0009H         SYMBOL        byte
+  -------         DO            
+  D:000AH         SYMBOL        hex_chars
+  -------         ENDDO         
+  C:09EEH         LINE#         38
+  C:09F0H         LINE#         39
+  C:0A03H         LINE#         40
+  C:0A10H         LINE#         41
+  -------         ENDPROC       _UART_SEND_HEX
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/02/2025  14:26:21  PAGE 4
+
+
+  -------         PROC          SPI_INIT
+  C:0ACFH         LINE#         45
+  C:0ACFH         LINE#         46
+  C:0AD1H         LINE#         47
+  C:0AD3H         LINE#         48
+  -------         ENDPROC       SPI_INIT
+  -------         PROC          _SPI_TRANSFER_BYTE
+  D:0005H         SYMBOL        byte_out
+  -------         DO            
+  D:0002H         SYMBOL        i
+  D:0003H         SYMBOL        byte_in
+  -------         ENDDO         
+  C:0A1CH         LINE#         51
+  C:0A1EH         LINE#         52
+  C:0A20H         LINE#         54
+  C:0A21H         LINE#         57
+  C:0A25H         LINE#         58
+  C:0A27H         LINE#         59
+  C:0A29H         LINE#         60
+  C:0A29H         LINE#         61
+  C:0A2BH         LINE#         62
+  C:0A2BH         LINE#         64
+  C:0A2FH         LINE#         67
+  C:0A31H         LINE#         68
+  C:0A34H         LINE#         71
+  C:0A38H         LINE#         72
+  C:0A3EH         LINE#         75
+  C:0A40H         LINE#         76
+  C:0A43H         LINE#         77
+  C:0A47H         LINE#         79
+  C:0A49H         LINE#         80
+  -------         ENDPROC       _SPI_TRANSFER_BYTE
+  -------         PROC          EEPROM_WRITE_ENABLE
+  C:0ABDH         LINE#         88
+  C:0ABDH         LINE#         89
+  C:0ABFH         LINE#         90
+  C:0AC4H         LINE#         91
+  C:0AC6H         LINE#         92
+  -------         ENDPROC       EEPROM_WRITE_ENABLE
+  -------         PROC          _EEPROM_WRITE_BYTE
+  D:0002H         SYMBOL        address
+  D:0001H         SYMBOL        data_to_write
+  -------         DO            
+  D:0009H         SYMBOL        high_addr
+  D:000AH         SYMBOL        low_addr
+  D:0002H         SYMBOL        i
+  -------         ENDDO         
+  C:09B7H         LINE#         95
+  C:09BBH         LINE#         96
+  C:09BEH         LINE#         97
+  C:09C1H         LINE#         101
+  C:09C4H         LINE#         104
+  C:09C6H         LINE#         105
+  C:09CBH         LINE#         106
+  C:09D0H         LINE#         107
+  C:09D5H         LINE#         108
+  C:09DAH         LINE#         109
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/02/2025  14:26:21  PAGE 5
+
+
+  C:09DCH         LINE#         112
+  C:09DFH         LINE#         113
+  C:09E2H         LINE#         114
+  C:09EDH         LINE#         115
+  -------         ENDPROC       _EEPROM_WRITE_BYTE
+  -------         PROC          _EEPROM_READ_BYTE
+  D:0004H         SYMBOL        address
+  -------         DO            
+  D:0009H         SYMBOL        high_addr
+  D:0001H         SYMBOL        low_addr
+  D:0007H         SYMBOL        read_data
+  -------         ENDDO         
+  C:0A6FH         LINE#         118
+  C:0A71H         LINE#         119
+  C:0A74H         LINE#         120
+  C:0A76H         LINE#         123
+  C:0A78H         LINE#         124
+  C:0A7DH         LINE#         125
+  C:0A82H         LINE#         126
+  C:0A87H         LINE#         127
+  C:0A8CH         LINE#         128
+  C:0A8EH         LINE#         130
+  C:0A8EH         LINE#         131
+  -------         ENDPROC       _EEPROM_READ_BYTE
+  -------         PROC          MAIN
+  -------         DO            
+  D:0008H         SYMBOL        written
+  D:0006H         SYMBOL        readback
+  -------         ENDDO         
+  C:096CH         LINE#         134
+  C:096CH         LINE#         135
+  C:096FH         LINE#         138
+  C:0972H         LINE#         139
+  C:0975H         LINE#         142
+  C:097EH         LINE#         143
+  C:0987H         LINE#         144
+  C:098CH         LINE#         145
+  C:0995H         LINE#         148
+  C:099EH         LINE#         149
+  C:09A7H         LINE#         150
+  C:09ACH         LINE#         151
+  C:09B5H         LINE#         153
+  C:09B5H         LINE#         155
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        ?C?COPY
+  C:08D0H         PUBLIC        ?C?COPY
+  -------         ENDMOD        ?C?COPY
+
+  -------         MODULE        ?C?CLDPTR
+  C:08F6H         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 01B9H BYTE (21%) *
+******************************************************************************
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/02/2025  14:26:21  PAGE 6
+
+
+
+Program Size: data=28.0 xdata=0 code=727
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

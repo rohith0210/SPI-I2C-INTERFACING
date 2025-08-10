@@ -1,0 +1,3 @@
+".\Objects\main.obj" 
+TO ".\Objects\Proteus_simulation_with_EEPROM" 
+PRINT(".\Listings\Proteus_simulation_with_EEPROM.m51") RAMSIZE(256) 

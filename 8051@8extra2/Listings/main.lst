@@ -1,0 +1,460 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              05/28/2025 15:19:56 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) TA
+                    -BS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          /*#include <reg52.h>
+   2          #include <intrins.h>  // for _nop_()
+   3          
+   4          // I²C pins
+   5          sbit SDA = P2^0;
+   6          sbit SCL = P2^1;
+   7          
+   8          // -----------------------------------------------------------------
+   9          // Tiny microsecond delay
+  10          void delay_us(unsigned int us)
+  11          {
+  12              while (us--) {
+  13                  _nop_();
+  14                  _nop_();
+  15              }
+  16          }
+  17          
+  18          // Millisecond delay (~1 ms at 11.0592 MHz)
+  19          void delay_ms(unsigned int ms)
+  20          {
+  21              unsigned int i;
+  22              while (ms--) {
+  23                  for (i = 0; i < 123; i++);
+  24              }
+  25          }
+  26          
+  27          // -----------------------------------------------------------------
+  28          // I²C START
+  29          void i2c_start(void)
+  30          {
+  31              SDA = 1; SCL = 1;   delay_us(5);
+  32              SDA = 0;            delay_us(5);
+  33              SCL = 0;            delay_us(5);
+  34          }
+  35          
+  36          // I²C STOP
+  37          void i2c_stop(void)
+  38          {
+  39              SDA = 0; SCL = 1;   delay_us(5);
+  40              SDA = 1;            delay_us(5);
+  41          }
+  42          
+  43          // -----------------------------------------------------------------
+  44          // Write one byte on I²C (ACK ignored)
+  45          void i2c_write(unsigned char d)
+  46          {
+  47              unsigned char i;
+  48              for (i = 0; i < 8; i++) {
+  49                  // Drive SDA = MSB of d
+  50                  if (d & 0x80)
+  51                      SDA = 1;
+  52                  else
+  53                      SDA = 0;
+  54                  // Pulse SCL
+C51 COMPILER V9.60.7.0   MAIN                                                              05/28/2025 15:19:56 PAGE 2   
+
+  55                  SCL = 1; delay_us(5);
+  56                  SCL = 0; delay_us(5);
+  57                  d <<= 1;
+  58              }
+  59              // Clock the ACK bit (ignored)
+  60              SDA = 1;
+  61              SCL = 1; delay_us(5);
+  62              SCL = 0; delay_us(5);
+  63          }
+  64          
+  65          // Read one byte on I²C then send NACK
+  66          unsigned char i2c_read(void)
+  67          {
+  68              unsigned char i, val = 0;
+  69              SDA = 1;  // release SDA
+  70              for (i = 0; i < 8; i++) {
+  71                  SCL = 1; delay_us(5);
+  72                  val <<= 1;
+  73                  if (SDA) val |= 1;
+  74                  SCL = 0; delay_us(5);
+  75              }
+  76              // Send NACK
+  77              SDA = 1;
+  78              SCL = 1; delay_us(5);
+  79              SCL = 0; delay_us(5);
+  80              return val;
+  81          }
+  82          
+  83          // -----------------------------------------------------------------
+  84          // BCD?Decimal
+  85          unsigned char bcd_to_dec(unsigned char bcd)
+  86          {
+  87              return ((bcd >> 4) * 10) + (bcd & 0x0F);
+  88          }
+  89          
+  90          // -----------------------------------------------------------------
+  91          // UART @9600 baud init
+  92          void uart_init(void)
+  93          {
+  94              TMOD |= 0x20;   // Timer1 Mode2
+  95              TH1 = 0xFD;     // Reload for 9600
+  96              TL1 = 0xFD;
+  97              SCON = 0x50;    // UART mode1, REN=1
+  98              TR1  = 1;       // Start Timer1
+  99          }
+ 100          
+ 101          // Send one char
+ 102          void uart_send_char(char c)
+ 103          {
+ 104              SBUF = c;
+ 105              while (!TI);
+ 106              TI = 0;
+ 107          }
+ 108          
+ 109          // Send string
+ 110          void uart_send_str(const char *s)
+ 111          {
+ 112              while (*s) uart_send_char(*s++);
+ 113          }
+ 114          
+ 115          // Send two-digit number 00–99
+ 116          void uart_send_num(unsigned char num)
+C51 COMPILER V9.60.7.0   MAIN                                                              05/28/2025 15:19:56 PAGE 3   
+
+ 117          {
+ 118              uart_send_char((num / 10) + '0');
+ 119              uart_send_char((num % 10) + '0');
+ 120          }
+ 121          
+ 122          // -----------------------------------------------------------------
+ 123          void main(void)
+ 124          {
+ 125              unsigned char seconds;
+ 126          
+ 127              uart_init();
+ 128              while (1) {
+ 129                  i2c_start();
+ 130                  i2c_write(0xD0);       // DS1307 write address
+ 131                  i2c_write(0x00);       // Seconds register
+ 132                  i2c_start();           // Repeated start
+ 133                  i2c_write(0xD1);       // DS1307 read address
+ 134                  seconds = i2c_read();  // Read raw BCD seconds
+ 135                  i2c_stop();
+ 136          
+ 137                  seconds = bcd_to_dec(seconds);
+ 138          
+ 139                  uart_send_str("Seconds: ");
+ 140                  uart_send_num(seconds);
+ 141                  uart_send_str("\r\n");
+ 142          
+ 143                  delay_ms(1000);
+ 144              }
+ 145          }
+ 146          */
+ 147          
+ 148          
+ 149          //THE CODE USING A HARDWARE DELAY!!
+ 150          
+ 151          /*
+ 152          #include <reg52.h>
+ 153          #include <intrins.h>
+ 154          
+ 155          // I2C pins
+ 156          sbit SDA = P2^0;
+ 157          sbit SCL = P2^1;
+ 158          
+ 159          bit one_sec_flag = 0;
+ 160          unsigned char tick_count = 0;
+ 161          
+ 162          // ========== Delay ==========
+ 163          void delay_us(unsigned int us)
+ 164          {
+ 165            //On an 11.0592 MHz crystal, one machine cycle = 12 oscillator clocks = 1.085 µs.  
+ 166            //Each _nop_() burns 1.085 µs. Two of them burn about 2.17 µs.
+ 167              while (us--) {
+ 168                  _nop_(); _nop_();
+ 169              }
+ 170          }
+ 171          
+ 172          // ========== I2C ==========
+ 173          void i2c_start(void)
+ 174          {
+ 175              SDA = 1; SCL = 1; delay_us(5);
+ 176              SDA = 0; delay_us(5);
+ 177              SCL = 0; delay_us(5);
+ 178          }
+C51 COMPILER V9.60.7.0   MAIN                                                              05/28/2025 15:19:56 PAGE 4   
+
+ 179          
+ 180          void i2c_stop(void)
+ 181          {
+ 182              SDA = 0; SCL = 1; delay_us(5);
+ 183              SDA = 1; delay_us(5);
+ 184          }
+ 185          
+ 186          void i2c_write(unsigned char d)
+ 187          {
+ 188              unsigned char i;
+ 189              for (i = 0; i < 8; i++) {
+ 190                  // Drive SDA = MSB of d
+ 191                  if (d & 0x80)
+ 192                      SDA = 1;
+ 193                  else
+ 194                      SDA = 0;
+ 195                  // Pulse SCL
+ 196                  SCL = 1; delay_us(5);
+ 197                  SCL = 0; delay_us(5);
+ 198                  d <<= 1;
+ 199              }
+ 200              // Clock ACK bit
+ 201              SDA = 1;
+ 202              SCL = 1; delay_us(5);
+ 203              SCL = 0; delay_us(5);
+ 204          }
+ 205          
+ 206          unsigned char i2c_read(void)
+ 207          {
+ 208              unsigned char i, val = 0;
+ 209              SDA = 1; // release SDA
+ 210              for (i = 0; i < 8; i++) {
+ 211                  SCL = 1; delay_us(5);
+ 212                  val <<= 1;
+ 213                  if (SDA) val |= 1;
+ 214                  SCL = 0; delay_us(5);
+ 215              }
+ 216              // NACK
+ 217              SDA = 1;
+ 218              SCL = 1; delay_us(5);
+ 219              SCL = 0; delay_us(5);
+ 220              return val;
+ 221          }
+ 222          
+ 223          // ========== BCD to Decimal ==========
+ 224          unsigned char bcd_to_dec(unsigned char bcd)
+ 225          {
+ 226              return ((bcd >> 4) * 10) + (bcd & 0x0F);
+ 227          }
+ 228          
+ 229          // ========== UART ==========
+ 230          void uart_init(void)
+ 231          {
+ 232              TMOD |= 0x20;     // Timer1 mode 2
+ 233              TH1 = 0xFD;       // 9600 baud
+ 234              TL1 = 0xFD;
+ 235              SCON = 0x50;      // 8-bit UART, REN=1
+ 236              TR1 = 1;          // Start Timer1
+ 237          }
+ 238          
+ 239          void uart_send_char(char c)
+ 240          {
+C51 COMPILER V9.60.7.0   MAIN                                                              05/28/2025 15:19:56 PAGE 5   
+
+ 241              SBUF = c;
+ 242              while (!TI);
+ 243              TI = 0;
+ 244          }
+ 245          
+ 246          void uart_send_str(const char *s)
+ 247          {
+ 248              while (*s) uart_send_char(*s++);
+ 249          }
+ 250          
+ 251          void uart_send_num(unsigned char num)
+ 252          {
+ 253              uart_send_char((num / 10) + '0');
+ 254              uart_send_char((num % 10) + '0');
+ 255          }
+ 256          
+ 257          // ========== Timer0 ISR ==========
+ 258          void timer0_ISR(void) interrupt 1
+ 259          {
+ 260              TH0 = 0x3C;  // Preload for 50ms overflow
+ 261              TL0 = 0xB0;
+ 262          
+ 263              tick_count++;
+ 264              if (tick_count >= 19) {  // 50ms x 20 = 1s
+ 265                  tick_count = 0;
+ 266                  one_sec_flag = 1;
+ 267              }
+ 268          }
+ 269          
+ 270          // ========== Timer Init ==========
+ 271          void timer0_init(void)
+ 272          {
+ 273              TMOD &= 0xF0;
+ 274              TMOD |= 0x01;  // Mode 1
+ 275              TH0 = 0x3C;
+ 276              TL0 = 0xB0;
+ 277              ET0 = 1;       // Enable Timer0 interrupt
+ 278              EA = 1;        // Enable global interrupt
+ 279              TR0 = 1;       // Start Timer0
+ 280          }
+ 281          
+ 282          // ========== Main ==========
+ 283          void main(void)
+ 284          {
+ 285              unsigned char seconds;
+ 286          
+ 287              uart_init();
+ 288              timer0_init();
+ 289          
+ 290              while (1) {
+ 291                  if (one_sec_flag) {
+ 292                      one_sec_flag = 0;
+ 293          
+ 294                      i2c_start();
+ 295                      i2c_write(0xD0);       // Write address
+ 296                      i2c_write(0x00);       // Seconds register
+ 297                      i2c_start();
+ 298                      i2c_write(0xD1);       // Read address
+ 299                      seconds = i2c_read();
+ 300                      i2c_stop();
+ 301          
+ 302                      seconds = bcd_to_dec(seconds);
+C51 COMPILER V9.60.7.0   MAIN                                                              05/28/2025 15:19:56 PAGE 6   
+
+ 303          
+ 304                      uart_send_str("Seconds: ");
+ 305                      uart_send_num(seconds);
+ 306                      uart_send_str("\r\n");
+ 307                  }
+ 308              }
+ 309          }
+ 310          */
+ 311          
+ 312          //poll-on-change method
+ 313          
+ 314          #include <reg52.h>
+ 315          #include <intrins.h>
+ 316          // I2C pins
+ 317          sbit SDA = P2^0;
+ 318          sbit SCL = P2^1;
+ 319          
+ 320          void delay_us(unsigned int us) {
+ 321   1          while (us--) {
+ 322   2              _nop_(); _nop_();
+ 323   2          }
+ 324   1      }
+ 325          
+ 326          // === I2C functions same as before ===
+ 327          void i2c_start(void) {
+ 328   1          SDA = 1; SCL = 1; delay_us(5);
+ 329   1          SDA = 0; delay_us(5);
+ 330   1          SCL = 0; delay_us(5);
+ 331   1      }
+ 332          
+ 333          void i2c_stop(void) {
+ 334   1          SDA = 0; SCL = 1; delay_us(5);
+ 335   1          SDA = 1; delay_us(5);
+ 336   1      }
+ 337          
+ 338          void i2c_write(unsigned char d) {
+ 339   1          unsigned char i;
+ 340   1          for (i = 0; i < 8; i++) {
+ 341   2              SDA = (d & 0x80) ? 1 : 0;
+ 342   2              SCL = 1; delay_us(5);
+ 343   2              SCL = 0; delay_us(5);
+ 344   2              d <<= 1;
+ 345   2          }
+ 346   1          SDA = 1;
+ 347   1          SCL = 1; delay_us(5);
+ 348   1          SCL = 0; delay_us(5);
+ 349   1      }
+ 350          
+ 351          unsigned char i2c_read(void) {
+ 352   1          unsigned char i, val = 0;
+ 353   1          SDA = 1;
+ 354   1          for (i = 0; i < 8; i++) {
+ 355   2              SCL = 1; delay_us(5);
+ 356   2              val <<= 1;
+ 357   2              if (SDA) val |= 1;
+ 358   2              SCL = 0; delay_us(5);
+ 359   2          }
+ 360   1          SDA = 1; // NACK
+ 361   1          SCL = 1; delay_us(5);
+ 362   1          SCL = 0; delay_us(5);
+ 363   1          return val;
+ 364   1      }
+C51 COMPILER V9.60.7.0   MAIN                                                              05/28/2025 15:19:56 PAGE 7   
+
+ 365          
+ 366          unsigned char bcd_to_dec(unsigned char bcd) {
+ 367   1          return ((bcd >> 4) * 10) + (bcd & 0x0F);
+ 368   1      }
+ 369          
+ 370          // UART
+ 371          void uart_init(void) {
+ 372   1          TMOD |= 0x20;
+ 373   1          TH1 = 0xFD;
+ 374   1          TL1 = 0xFD;
+ 375   1          SCON = 0x50;
+ 376   1          TR1 = 1;
+ 377   1      }
+ 378          
+ 379          void uart_send_char(char c) {
+ 380   1          SBUF = c;
+ 381   1          while (!TI);
+ 382   1          TI = 0;
+ 383   1      }
+ 384          
+ 385          void uart_send_str(const char *s) {
+ 386   1          while (*s) uart_send_char(*s++);
+ 387   1      }
+ 388          
+ 389          void uart_send_num(unsigned char num) {
+ 390   1          uart_send_char((num / 10) + '0');
+ 391   1          uart_send_char((num % 10) + '0');
+ 392   1      }
+ 393          
+ 394          void main() {
+ 395   1          unsigned char prev_sec = 0xFF; // Invalid initial value
+ 396   1          unsigned char current_sec;
+ 397   1      
+ 398   1          uart_init();
+ 399   1      
+ 400   1          while (1) {
+ 401   2              // Read RTC seconds
+ 402   2              i2c_start();
+ 403   2              i2c_write(0xD0); // RTC write addr
+ 404   2              i2c_write(0x00); // seconds register
+ 405   2              i2c_start();
+ 406   2              i2c_write(0xD1); // RTC read addr
+ 407   2              current_sec = i2c_read();
+ 408   2              i2c_stop();
+ 409   2      
+ 410   2              // Compare only when value changes
+ 411   2               if(current_sec!=prev_sec){
+ 412   3                prev_sec = current_sec;
+ 413   3                current_sec = bcd_to_dec(current_sec);
+ 414   3                
+ 415   3                uart_send_str("Seconds: ");
+ 416   3                uart_send_num(current_sec);
+ 417   3                uart_send_str("\r\n");
+ 418   3              }
+ 419   2              delay_us(5);
+ 420   2              
+ 421   2          }
+ 422   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    312    ----
+C51 COMPILER V9.60.7.0   MAIN                                                              05/28/2025 15:19:56 PAGE 8   
+
+   CONSTANT SIZE    =     13    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

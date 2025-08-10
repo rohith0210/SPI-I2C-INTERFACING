@@ -1,0 +1,3 @@
+".\Objects\main.obj" 
+TO ".\Objects\SPI_Loopback_Test" 
+PRINT(".\Listings\SPI_Loopback_Test.m51") RAMSIZE(256) 

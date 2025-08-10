@@ -1,0 +1,272 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/28/2025  15:19:56  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+D:\C51\BIN\BL51.EXE .\Objects\main.obj TO .\Objects\reading_seconds_from_the_DS1307_via_I2C_and_sending_over_UART PRINT 
+>> (.\Listings\reading_seconds_from_the_DS1307_via_I2C_and_sending_over_UART.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\main.obj (MAIN)
+  D:\C51\LIB\C51S.LIB (?C_STARTUP)
+  D:\C51\LIB\C51S.LIB (?C?CLDPTR)
+
+
+LINK MAP OF MODULE:  .\Objects\reading_seconds_from_the_DS1307_via_I2C_and_sending_over_UART (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0004H     UNIT         _DATA_GROUP_
+            IDATA   000CH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     004DH     UNIT         ?PR?MAIN?MAIN
+            CODE    084DH     002AH     UNIT         ?PR?_I2C_WRITE?MAIN
+            CODE    0877H     0026H     UNIT         ?PR?I2C_READ?MAIN
+            CODE    089DH     0025H     UNIT         ?PR?_UART_SEND_STR?MAIN
+            CODE    08C2H     001AH     UNIT         ?PR?_UART_SEND_NUM?MAIN
+            CODE    08DCH     0019H     UNIT         ?C?LIB_CODE
+            CODE    08F5H     0017H     UNIT         ?PR?_DELAY_US?MAIN
+            CODE    090CH     0011H     UNIT         ?PR?I2C_START?MAIN
+            CODE    091DH     000FH     UNIT         ?PR?_BCD_TO_DEC?MAIN
+            CODE    092CH     000FH     UNIT         ?PR?UART_INIT?MAIN
+            CODE    093BH     000EH     UNIT         ?PR?I2C_STOP?MAIN
+            CODE    0949H     000DH     UNIT         ?CO?MAIN
+            CODE    0956H     000CH     UNIT         ?C_C51STARTUP
+            CODE    0962H     0008H     UNIT         ?PR?_UART_SEND_CHAR?MAIN
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\reading_seconds_from_the_DS1307_via_I2C_and_sending_over_UART (MAIN)
+
+
+SEGMENT                            DATA_GROUP 
+  +--> CALLED SEGMENT            START    LENGTH
+------------------------------------------------
+?C_C51STARTUP                    -----    -----
+  +--> ?PR?MAIN?MAIN
+
+?PR?MAIN?MAIN                    0008H    0001H
+  +--> ?PR?UART_INIT?MAIN
+  +--> ?PR?I2C_START?MAIN
+  +--> ?PR?_I2C_WRITE?MAIN
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/28/2025  15:19:56  PAGE 2
+
+
+  +--> ?PR?I2C_READ?MAIN
+  +--> ?PR?I2C_STOP?MAIN
+  +--> ?PR?_BCD_TO_DEC?MAIN
+  +--> ?CO?MAIN
+  +--> ?PR?_UART_SEND_STR?MAIN
+  +--> ?PR?_UART_SEND_NUM?MAIN
+  +--> ?PR?_DELAY_US?MAIN
+
+?PR?I2C_START?MAIN               -----    -----
+  +--> ?PR?_DELAY_US?MAIN
+
+?PR?_I2C_WRITE?MAIN              -----    -----
+  +--> ?PR?_DELAY_US?MAIN
+
+?PR?I2C_READ?MAIN                -----    -----
+  +--> ?PR?_DELAY_US?MAIN
+
+?PR?I2C_STOP?MAIN                -----    -----
+  +--> ?PR?_DELAY_US?MAIN
+
+?PR?_UART_SEND_STR?MAIN          0009H    0003H
+  +--> ?PR?_UART_SEND_CHAR?MAIN
+
+?PR?_UART_SEND_NUM?MAIN          -----    -----
+  +--> ?PR?_UART_SEND_CHAR?MAIN
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\reading_seconds_from_the_DS1307_via_I2C_and_sending_over_UART (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  C:089DH         PUBLIC        _uart_send_str
+  C:084DH         PUBLIC        _i2c_write
+  D:00A8H         PUBLIC        IE
+  C:090CH         PUBLIC        i2c_start
+  D:00B8H         PUBLIC        IP
+  B:0098H.1       PUBLIC        TI
+  C:0800H         PUBLIC        main
+  C:093BH         PUBLIC        i2c_stop
+  D:0099H         PUBLIC        SBUF
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  C:0962H         PUBLIC        _uart_send_char
+  D:008DH         PUBLIC        TH1
+  D:008BH         PUBLIC        TL1
+  C:092CH         PUBLIC        uart_init
+  B:0088H.6       PUBLIC        TR1
+  B:00A0H.0       PUBLIC        SDA
+  C:08FDH         PUBLIC        _delay_us
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/28/2025  15:19:56  PAGE 3
+
+
+  B:00A0H.1       PUBLIC        SCL
+  D:00C8H         PUBLIC        T2CON
+  D:00D0H         PUBLIC        PSW
+  C:091DH         PUBLIC        _bcd_to_dec
+  C:08C2H         PUBLIC        _uart_send_num
+  C:0877H         PUBLIC        i2c_read
+  C:08F5H         SYMBOL        L?0033
+  C:08F7H         SYMBOL        L?0034
+  C:08F9H         SYMBOL        L?0035
+  -------         PROC          L?0032
+  -------         ENDPROC       L?0032
+  C:08F5H         SYMBOL        L?0033
+  C:08F7H         SYMBOL        L?0034
+  C:08F9H         SYMBOL        L?0035
+  -------         PROC          _DELAY_US
+  D:0006H         SYMBOL        us
+  C:08FDH         LINE#         320
+  C:08FDH         LINE#         321
+  C:0907H         LINE#         322
+  C:0909H         LINE#         323
+  C:090BH         LINE#         324
+  -------         ENDPROC       _DELAY_US
+  -------         PROC          I2C_START
+  C:090CH         LINE#         327
+  C:090CH         LINE#         328
+  C:090FH         LINE#         329
+  C:0914H         LINE#         330
+  -------         ENDPROC       I2C_START
+  -------         PROC          I2C_STOP
+  C:093BH         LINE#         333
+  C:093BH         LINE#         334
+  C:0940H         LINE#         335
+  -------         ENDPROC       I2C_STOP
+  -------         PROC          _I2C_WRITE
+  D:0005H         SYMBOL        d
+  -------         DO            
+  D:0003H         SYMBOL        i
+  -------         ENDDO         
+  C:084DH         LINE#         338
+  C:084FH         LINE#         340
+  C:0851H         LINE#         341
+  C:085BH         LINE#         342
+  C:085EH         LINE#         343
+  C:0863H         LINE#         344
+  C:0867H         LINE#         345
+  C:086BH         LINE#         346
+  C:086BH         LINE#         347
+  C:086EH         LINE#         348
+  -------         ENDPROC       _I2C_WRITE
+  -------         PROC          I2C_READ
+  -------         DO            
+  D:0003H         SYMBOL        i
+  D:0005H         SYMBOL        val
+  -------         ENDDO         
+  C:0877H         LINE#         351
+  C:0877H         LINE#         352
+  C:0879H         LINE#         353
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/28/2025  15:19:56  PAGE 4
+
+
+  C:087BH         LINE#         354
+  C:087CH         LINE#         355
+  C:087FH         LINE#         356
+  C:0883H         LINE#         357
+  C:0889H         LINE#         358
+  C:088EH         LINE#         359
+  C:0892H         LINE#         360
+  C:0892H         LINE#         361
+  C:0895H         LINE#         362
+  C:089AH         LINE#         363
+  C:089CH         LINE#         364
+  -------         ENDPROC       I2C_READ
+  -------         PROC          _BCD_TO_DEC
+  D:0007H         SYMBOL        bcd
+  C:091DH         LINE#         366
+  C:091DH         LINE#         367
+  C:092BH         LINE#         368
+  -------         ENDPROC       _BCD_TO_DEC
+  -------         PROC          UART_INIT
+  C:092CH         LINE#         371
+  C:092CH         LINE#         372
+  C:092FH         LINE#         373
+  C:0932H         LINE#         374
+  C:0935H         LINE#         375
+  C:0938H         LINE#         376
+  C:093AH         LINE#         377
+  -------         ENDPROC       UART_INIT
+  -------         PROC          _UART_SEND_CHAR
+  D:0007H         SYMBOL        c
+  C:0962H         LINE#         379
+  C:0962H         LINE#         380
+  C:0964H         LINE#         381
+  C:0967H         LINE#         382
+  C:0969H         LINE#         383
+  -------         ENDPROC       _UART_SEND_CHAR
+  -------         PROC          _UART_SEND_STR
+  D:0009H         SYMBOL        s
+  C:089DH         LINE#         385
+  C:08A3H         LINE#         386
+  C:08C1H         LINE#         387
+  -------         ENDPROC       _UART_SEND_STR
+  -------         PROC          _UART_SEND_NUM
+  D:0006H         SYMBOL        num
+  C:08C2H         LINE#         389
+  C:08C4H         LINE#         390
+  C:08CFH         LINE#         391
+  -------         ENDPROC       _UART_SEND_NUM
+  -------         PROC          MAIN
+  -------         DO            
+  D:0008H         SYMBOL        prev_sec
+  D:0005H         SYMBOL        current_sec
+  -------         ENDDO         
+  C:0800H         LINE#         394
+  C:0800H         LINE#         395
+  C:0803H         LINE#         398
+  C:0806H         LINE#         400
+  C:0806H         LINE#         402
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/28/2025  15:19:56  PAGE 5
+
+
+  C:0809H         LINE#         403
+  C:080EH         LINE#         404
+  C:0813H         LINE#         405
+  C:0816H         LINE#         406
+  C:081BH         LINE#         407
+  C:0820H         LINE#         408
+  C:0823H         LINE#         411
+  C:0828H         LINE#         412
+  C:082AH         LINE#         413
+  C:0831H         LINE#         415
+  C:083AH         LINE#         416
+  C:083FH         LINE#         417
+  C:0848H         LINE#         418
+  C:0848H         LINE#         419
+  C:084BH         LINE#         421
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        ?C?CLDPTR
+  C:08DCH         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0145H BYTE (15%) *
+******************************************************************************
+
+Program Size: data=13.0 xdata=0 code=365
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

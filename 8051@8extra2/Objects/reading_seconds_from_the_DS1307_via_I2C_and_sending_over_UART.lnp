@@ -1,0 +1,3 @@
+".\Objects\main.obj" 
+TO ".\Objects\reading_seconds_from_the_DS1307_via_I2C_and_sending_over_UART" 
+PRINT(".\Listings\reading_seconds_from_the_DS1307_via_I2C_and_sending_over_UART.m51") RAMSIZE(256) 

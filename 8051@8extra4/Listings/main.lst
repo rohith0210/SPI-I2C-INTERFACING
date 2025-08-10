@@ -1,0 +1,185 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              06/02/2025 14:26:21 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) TA
+                    -BS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include <intrins.h>
+   3          
+   4          // 1. SPI Bit-Bang Pin Definitions
+   5          sbit SPI_MOSI = P2^0;
+   6          sbit SPI_MISO = P2^1;
+   7          sbit SPI_SCLK = P2^2;
+   8          sbit SPI_CS   = P2^3;
+   9          
+  10          // 2. Microsecond Delay
+  11          void delay_us(unsigned int us) {
+  12   1          while (us--) {
+  13   2              _nop_();
+  14   2              _nop_();
+  15   2          }
+  16   1      }
+  17          
+  18          // 3. UART Initialization @9600 baud
+  19          void uart_init(void) {
+  20   1          TMOD |= 0x20;        // Timer1 in Mode2 (8-bit auto-reload)
+  21   1          TH1 = TL1 = 0xFD;    // 9600 baud @11.0592 MHz
+  22   1          SCON = 0x50;         // Serial mode1, REN=1
+  23   1          TR1  = 1;            // Start Timer1
+  24   1      }
+  25          
+  26          void uart_send_char(char c) {
+  27   1          SBUF = c;
+  28   1          while (!TI);
+  29   1          TI = 0;
+  30   1      }
+  31          
+  32          void uart_send_str(char *s) {
+  33   1          while (*s) {
+  34   2              uart_send_char(*s++);
+  35   2          }
+  36   1      }
+  37          
+  38          void uart_send_hex(unsigned char byte) {
+  39   1          char hex_chars[] = "0123456789ABCDEF";
+  40   1          uart_send_char(hex_chars[byte >> 4]);
+  41   1          uart_send_char(hex_chars[byte & 0x0F]);
+  42   1      }
+  43          
+  44          // 4. SPI Initialization (Mode 0)
+  45          void spi_init(void) {
+  46   1          SPI_CS   = 1;   // Deselect EEPROM
+  47   1          SPI_SCLK = 0;   // Clock idle LOW
+  48   1      }
+  49          
+  50          // 5. SPI Transfer (Send+Receive One Byte)
+  51          unsigned char spi_transfer_byte(unsigned char byte_out) {
+  52   1          unsigned char i, byte_in = 0;
+  53   1      
+  54   1          for (i = 0; i < 8; i++) {
+C51 COMPILER V9.60.7.0   MAIN                                                              06/02/2025 14:26:21 PAGE 2   
+
+  55   2              // Send MSB first
+  56   2              //SPI_MOSI = (byte_out & 0x80) ? 1 : 0;
+  57   2            if (byte_out & 0x80){
+  58   3               SPI_MOSI = 1;
+  59   3             }
+  60   2             else{
+  61   3              SPI_MOSI = 0;
+  62   3            }
+  63   2            
+  64   2              byte_out <<= 1;
+  65   2      
+  66   2              // Clock HIGH: slave samples MOSI, shifts out MISO
+  67   2              SPI_SCLK = 1;
+  68   2              delay_us(5);
+  69   2      
+  70   2              // Read one bit from MISO
+  71   2              byte_in <<= 1;
+  72   2              if (SPI_MISO) byte_in |= 1;
+  73   2      
+  74   2              // Clock LOW: prepare next bit
+  75   2              SPI_SCLK = 0;
+  76   2              delay_us(5);
+  77   2          }
+  78   1      
+  79   1          return byte_in;
+  80   1      }
+  81          
+  82          // 6. EEPROM Command Definitions
+  83          #define EEPROM_CMD_WREN   0x06
+  84          #define EEPROM_CMD_WRITE  0x02
+  85          #define EEPROM_CMD_READ   0x03
+  86          
+  87          // 7. Issue Write Enable
+  88          void eeprom_write_enable(void) {
+  89   1          SPI_CS = 0;
+  90   1          spi_transfer_byte(EEPROM_CMD_WREN);
+  91   1          SPI_CS = 1;
+  92   1      }
+  93          
+  94          // 8. Write One Byte to EEPROM
+  95          void eeprom_write_byte(unsigned int address, unsigned char data_to_write) {
+  96   1          unsigned char high_addr = (address >> 8) & 0xFF;
+  97   1          unsigned char low_addr  =  address       & 0xFF;
+  98   1          unsigned int  i;
+  99   1      
+ 100   1          // a) Enable write
+ 101   1          eeprom_write_enable();
+ 102   1      
+ 103   1          // b) Send WRITE command + 16-bit address + data
+ 104   1          SPI_CS = 0;
+ 105   1            spi_transfer_byte(EEPROM_CMD_WRITE);
+ 106   1            spi_transfer_byte(high_addr);
+ 107   1            spi_transfer_byte(low_addr);
+ 108   1            spi_transfer_byte(data_to_write);
+ 109   1          SPI_CS = 1;
+ 110   1      
+ 111   1          // c) Wait ~5 ms for internal write cycle
+ 112   1          for (i = 0; i < 1500; i++) {
+ 113   2              delay_us(5);
+ 114   2          }
+ 115   1      }
+ 116          
+C51 COMPILER V9.60.7.0   MAIN                                                              06/02/2025 14:26:21 PAGE 3   
+
+ 117          // 9. Read One Byte from EEPROM
+ 118          unsigned char eeprom_read_byte(unsigned int address) {
+ 119   1          unsigned char high_addr = (address >> 8) & 0xFF;
+ 120   1          unsigned char low_addr  =  address       & 0xFF;
+ 121   1          unsigned char read_data;
+ 122   1      
+ 123   1          SPI_CS = 0;
+ 124   1            spi_transfer_byte(EEPROM_CMD_READ);
+ 125   1            spi_transfer_byte(high_addr);
+ 126   1            spi_transfer_byte(low_addr);
+ 127   1            read_data = spi_transfer_byte(0x00);  // send dummy to receive
+ 128   1          SPI_CS = 1;
+ 129   1      
+ 130   1          return read_data;
+ 131   1      }
+ 132          
+ 133          // 10. Main Function
+ 134          void main(void) {
+ 135   1          unsigned char written   = 0x5A;
+ 136   1          unsigned char readback;
+ 137   1      
+ 138   1          uart_init();
+ 139   1          spi_init();
+ 140   1      
+ 141   1          // Write 0x5A to address 0x0010
+ 142   1          eeprom_write_byte(0x0010, written);
+ 143   1          uart_send_str("Wrote 0x");
+ 144   1          uart_send_hex(written);
+ 145   1          uart_send_str(" to EEPROM address 0x0010\r\n");
+ 146   1      
+ 147   1          // Read back from 0x0010
+ 148   1          readback = eeprom_read_byte(0x0010);
+ 149   1          uart_send_str("Read  0x");
+ 150   1          uart_send_hex(readback);
+ 151   1          uart_send_str(" from EEPROM address 0x0010\r\n");
+ 152   1      
+ 153   1          while (1) {
+ 154   2              // Optional: Stay here
+ 155   2          }
+ 156   1      }
+ 157          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    348    ----
+   CONSTANT SIZE    =     93    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      25
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
